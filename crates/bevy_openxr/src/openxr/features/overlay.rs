@@ -62,7 +62,7 @@ fn add_overlay_info_to_chain(
     }
 }
 
-#[derive(Event, Clone, Copy, Debug)]
+#[derive(BufferedEvent, Clone, Copy, Debug)]
 pub enum OxrOverlaySessionEvent {
     MainSessionVisibilityChanged {
         visible: bool,

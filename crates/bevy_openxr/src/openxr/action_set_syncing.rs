@@ -31,7 +31,7 @@ fn sync_sets(session: Res<OxrSession>, mut events: EventReader<OxrSyncActionSet>
     }
 }
 
-#[derive(Event, Clone)]
+#[derive(BufferedEvent, Clone)]
 /// Send this event for every ActionSet you want to attach to the [`OxrSession`] once the Session Status changed to Ready. all requests will
 pub struct OxrSyncActionSet(pub openxr::ActionSet);
 

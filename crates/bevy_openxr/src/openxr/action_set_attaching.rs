@@ -36,7 +36,7 @@ fn attach_sets(session: Res<OxrSession>, mut events: EventReader<OxrAttachAction
     };
 }
 
-#[derive(Event, Clone)]
+#[derive(BufferedEvent, Clone)]
 /// Send this event for every ActionSet you want to attach to the [`OxrSession`] once the Session Status changed to Ready. all requests will
 /// be applied in [`PostUpdate`]
 pub struct OxrAttachActionSet(pub openxr::ActionSet);

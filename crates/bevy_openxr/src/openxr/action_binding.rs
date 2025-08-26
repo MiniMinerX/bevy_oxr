@@ -88,7 +88,7 @@ fn bind_actions(instance: Res<OxrInstance>, mut actions: EventReader<OxrSuggestA
     }
 }
 
-#[derive(Event, Clone)]
+#[derive(BufferedEvent, Clone)]
 /// Only Send this for Actions that were not attached yet!
 pub struct OxrSuggestActionBinding {
     pub action: openxr::sys::Action,

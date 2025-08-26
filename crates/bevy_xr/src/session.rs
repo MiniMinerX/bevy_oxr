@@ -3,7 +3,7 @@ use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
 use bevy::app::{AppExit, MainScheduleOrder};
-use bevy::ecs::component::HookContext;
+use bevy::ecs::lifecycle::HookContext;
 use bevy::ecs::schedule::ScheduleLabel;
 use bevy::ecs::world::DeferredWorld;
 use bevy::prelude::*;
@@ -11,7 +11,7 @@ use bevy::render::extract_resource::{ExtractResource, ExtractResourcePlugin};
 use bevy::render::{Render, RenderApp, RenderSet};
 
 /// Event sent to instruct backends to create an XR session. Only works when the [`XrState`] is [`Available`](XrState::Available).
-#[derive(Event, Clone, Copy, Default)]
+#[derive(BufferedEvent, Clone, Copy, Default)]
 pub struct XrCreateSessionEvent;
 
 /// A schedule thats ran whenever an [`XrCreateSessionEvent`] is recieved while the [`XrState`] is [`Available`](XrState::Available)
@@ -19,12 +19,12 @@ pub struct XrCreateSessionEvent;
 pub struct XrSessionCreated;
 
 /// Event sent after the XrSession was created.
-#[derive(Event, Clone, Copy, Default)]
+#[derive(BufferedEvent, Clone, Copy, Default)]
 pub struct XrSessionCreatedEvent;
 
 /// Event sent to instruct backends to destroy an XR session. Only works when the [`XrState`] is [`Exiting`](XrState::Exiting).
 /// If you would like to request that a running session be destroyed, send the [`XrRequestExitEvent`] instead.
-#[derive(Event, Clone, Copy, Default)]
+#[derive(BufferedEvent, Clone, Copy, Default)]
 pub struct XrDestroySessionEvent;
 
 /// Resource flag thats inserted into the world and extracted to the render world to inform any session resources in the render world to drop.
@@ -36,7 +36,7 @@ pub struct XrDestroySessionRender(pub Arc<AtomicBool>);
 pub struct XrPreDestroySession;
 
 /// Event sent to instruct backends to begin an XR session. Only works when the [`XrState`] is [`Ready`](XrState::Ready).
-#[derive(Event, Clone, Copy, Default)]
+#[derive(BufferedEvent, Clone, Copy, Default)]
 pub struct XrBeginSessionEvent;
 
 /// Schedule thats ran when the XrSession has begun.
@@ -44,7 +44,7 @@ pub struct XrBeginSessionEvent;
 pub struct XrPostSessionBegin;
 
 /// Event sent to backends to end an XR session. Only works when the [`XrState`] is [`Stopping`](XrState::Stopping).
-#[derive(Event, Clone, Copy, Default)]
+#[derive(BufferedEvent, Clone, Copy, Default)]
 pub struct XrEndSessionEvent;
 
 /// Schedule thats ran whenever the XrSession is about to end
@@ -52,11 +52,11 @@ pub struct XrEndSessionEvent;
 pub struct XrPreSessionEnd;
 
 /// Event that is emitted when the XrSession is fully destroyed
-#[derive(Clone, Copy, Default, PartialEq, Eq, Debug, Hash, Event)]
+#[derive(Clone, Copy, Default, PartialEq, Eq, Debug, Hash, BufferedEvent)]
 pub struct XrSessionDestroyedEvent;
 
 /// Event sent to backends to request the [`XrState`] proceed to [`Exiting`](XrState::Exiting) and for the session to be exited. Can be called at any time a session exists.
-#[derive(Event, Clone, Copy, Default)]
+#[derive(BufferedEvent, Clone, Copy, Default)]
 pub struct XrRequestExitEvent;
 
 /// Schedule ran before [`First`] to handle XR events.
@@ -178,7 +178,7 @@ impl Plugin for XrSessionPlugin {
         .init_resource::<XrRootTransform>()
         .add_systems(
             PostUpdate,
-            update_root_transform.after(TransformSystem::TransformPropagate),
+            update_root_transform.after(TransformSystems::Propagate),
         )
         .add_systems(
             XrFirst,
@@ -220,7 +220,7 @@ fn exits_session_on_app_exit(mut request_exit: EventWriter<XrRequestExitEvent>) 
 }
 
 /// Event sent by backends whenever [`XrState`] is changed.
-#[derive(Event, Clone, Copy, Deref)]
+#[derive(BufferedEvent, Clone, Copy, Deref)]
 pub struct XrStateChanged(pub XrState);
 
 /// A resource in the main world and render world representing the current session state.
@@ -332,5 +332,4 @@ macro_rules! state_matches {
     };
 }
 
-use bevy::transform::TransformSystem;
 pub use state_matches;

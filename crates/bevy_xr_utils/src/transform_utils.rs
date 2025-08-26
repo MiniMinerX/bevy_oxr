@@ -16,10 +16,10 @@ impl Plugin for TransformUtilitiesPlugin {
 }
 
 //events
-#[derive(Event, Debug)]
+#[derive(BufferedEvent, Debug)]
 pub struct SnapToRotation(pub Quat);
 
-#[derive(Event, Debug)]
+#[derive(BufferedEvent, Debug)]
 pub struct SnapToPosition(pub Vec3);
 
 pub fn handle_transform_events(

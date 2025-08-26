@@ -10,7 +10,7 @@ impl Plugin for GenericTrackerGizmoPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             PostUpdate,
-            draw_gizmos.after(TransformSystem::TransformPropagate),
+            draw_gizmos.after(TransformSystems::Propagate),
         );
     }
 }

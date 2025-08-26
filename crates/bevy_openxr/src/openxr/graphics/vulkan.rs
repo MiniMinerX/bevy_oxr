@@ -5,7 +5,7 @@ use ash::vk::{self, Handle};
 use bevy::log::{debug, error};
 use bevy::math::UVec2;
 use openxr::{sys, Version};
-use wgpu::InstanceFlags;
+use wgpu::{InstanceFlags, MemoryBudgetThresholds, TextureUses};
 use wgpu_hal::api::Vulkan;
 use wgpu_hal::Api;
 
@@ -52,8 +52,16 @@ unsafe impl GraphicsExt for openxr::Vulkan {
         resolution: UVec2,
     ) -> Result<wgpu::Texture> {
         let color_image = vk::Image::from_raw(color_image);
+
         let wgpu_hal_texture = unsafe {
-            <wgpu_hal::vulkan::Api as wgpu_hal::Api>::Device::texture_from_raw(
+            let device_hal_opt = device.as_hal::<wgpu_hal::vulkan::Api>();
+            let device_hal = match &device_hal_opt {
+                Some(device_hal) => device_hal,
+                None => return Err(OxrError::FailedGraphicsRequirements),
+            };
+
+            wgpu_hal::vulkan::Device::texture_from_raw(
+                device_hal,
                 color_image,
                 &wgpu_hal::TextureDescriptor {
                     label: Some("VR Swapchain"),
@@ -66,7 +74,7 @@ unsafe impl GraphicsExt for openxr::Vulkan {
                     sample_count: 1,
                     dimension: wgpu::TextureDimension::D2,
                     format,
-                    usage: wgpu_hal::TextureUses::COLOR_TARGET | wgpu_hal::TextureUses::COPY_DST,
+                    usage: wgpu::TextureUses::COLOR_TARGET | wgpu::TextureUses::COPY_DST,
                     memory_flags: wgpu_hal::MemoryFlags::empty(),
                     view_formats: vec![],
                 },
@@ -370,6 +378,10 @@ fn init_from_instance_and_dev(
             None,
             instance_exts,
             instance_flags,
+            MemoryBudgetThresholds {
+                for_resource_creation: None,
+                for_device_loss: None,
+            },
             has_nv_optimus,
             None,
         )?
@@ -442,8 +454,8 @@ fn init_from_instance_and_dev(
                 required_features: wgpu_features,
                 required_limits: limits,
                 memory_hints: wgpu::MemoryHints::Performance,
+                trace: wgpu::Trace::Off,
             },
-            None,
         )
     }?;
     Ok((
