@@ -3,6 +3,8 @@ use std::sync::Arc;
 
 use bevy::prelude::*;
 use bevy::render::extract_resource::ExtractResourcePlugin;
+#[cfg(feature = "dlss")]
+use bevy::render::renderer::raw_vulkan_init;
 use bevy::render::renderer::RenderAdapter;
 use bevy::render::renderer::RenderAdapterInfo;
 use bevy::render::renderer::RenderDevice;
@@ -97,6 +99,8 @@ impl Plugin for OxrInitPlugin {
                                 RenderAdapterInfo(WgpuWrapper::new(adapter_info)),
                                 RenderAdapter(Arc::new(WgpuWrapper::new(adapter))),
                                 RenderInstance(Arc::new(WgpuWrapper::new(wgpu_instance))),
+                                #[cfg(feature = "dlss")]
+                                raw_vulkan_init::AdditionalVulkanFeatures::default(),
                             ),
                             synchronous_pipeline_compilation: self.synchronous_pipeline_compilation,
                             debug_flags: self.render_debug_flags,
@@ -177,6 +181,8 @@ impl Plugin for OxrInitPlugin {
                                 RenderAdapterInfo(WgpuWrapper::new(adapter_info)),
                                 RenderAdapter(Arc::new(WgpuWrapper::new(adapter))),
                                 RenderInstance(Arc::new(WgpuWrapper::new(wgpu_instance))),
+                                #[cfg(feature = "dlss")]
+                                raw_vulkan_init::AdditionalVulkanFeatures::default(),
                             ),
                             synchronous_pipeline_compilation: self.synchronous_pipeline_compilation,
                             debug_flags: self.render_debug_flags,

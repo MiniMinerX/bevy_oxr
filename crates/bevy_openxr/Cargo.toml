@@ -12,9 +12,10 @@ default = ["vulkan", "d3d12", "passthrough"]
 vulkan = ["dep:ash", "dep:android_system_properties"]
 d3d12 = ["wgpu/dx12", "wgpu-hal/dx12", "dep:winapi"]
 passthrough = []
+dlss = ["bevy/dlss"]
 
 [dev-dependencies]
-bevy = { workspace = true, default-features = true }
+bevy = { workspace = true, default-features = true}
 
 [target.'cfg(target_os = "android")'.dependencies]
 ndk-context = "0.1"
@@ -24,6 +25,7 @@ android_system_properties = { version = "0.1.5", optional = true }
 # bevy can't be placed behind target or proc macros won't work properly
 [dependencies]
 bevy.workspace = true
+
 
 # all other dependencies are placed under this since on wasm, this crate is completely empty
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
