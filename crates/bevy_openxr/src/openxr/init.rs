@@ -16,7 +16,7 @@ use bevy::render::Render;
 use bevy::render::RenderApp;
 use bevy::render::RenderDebugFlags;
 use bevy::render::RenderPlugin;
-use bevy::render::WgpuWrapper;
+use bevy::render::renderer::WgpuWrapper;
 use bevy::winit::UpdateMode;
 use bevy::winit::WinitSettings;
 use bevy_mod_xr::session::*;
