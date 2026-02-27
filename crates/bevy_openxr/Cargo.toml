@@ -8,12 +8,14 @@ license.workspace = true
 keywords = ["gamedev", "bevy", "Xr", "Vr", "OpenXR"]
 
 [features]
-default = ["vulkan"]
+default = ["vulkan", "openxr-static"]
 vulkan = ["dep:ash", "dep:android_system_properties"]
 d3d12 = ["wgpu/dx12", "wgpu-hal/dx12", "dep:winapi"]
 fb_passthrough = []
 reflect = ["dep:bevy_reflect"]
 window_support = ["dep:bevy_winit", "dep:bevy_window"]
+openxr-static = ["openxr/static"]
+openxr-loaded = ["openxr/loaded"]
 
 [dev-dependencies]
 bevy.workspace = true
@@ -51,7 +53,7 @@ ash = { version = "0.38", optional = true }
 wgpu = { workspace = true, features = ["vulkan-portability"] }
 
 [target.'cfg(target_family = "windows")'.dependencies]
-openxr = { workspace = true, features = ["mint", "static"] }
+openxr = { workspace = true, features = ["mint"] }
 winapi = { version = "0.3.9", optional = true }
 
 [lints.clippy]
