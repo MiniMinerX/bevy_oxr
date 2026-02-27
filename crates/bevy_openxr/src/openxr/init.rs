@@ -260,9 +260,16 @@ impl OxrInitPlugin {
         OxrEnabledExtensions,
         SessionGraphicsCreateInfo,
     )> {
-        #[cfg(windows)]
+        // Ensure exactly one of openxr-static or openxr-loaded is enabled
+        #[cfg(all(feature = "openxr-static", feature = "openxr-loaded"))]
+        compile_error!("Cannot enable both 'openxr-static' and 'openxr-loaded' features. Choose one.");
+        
+        #[cfg(all(not(feature = "openxr-static"), not(feature = "openxr-loaded")))]
+        compile_error!("Must enable either 'openxr-static' or 'openxr-loaded' feature.");
+        
+        #[cfg(feature = "openxr-static")]
         let entry = OxrEntry(openxr::Entry::linked());
-        #[cfg(not(windows))]
+        #[cfg(feature = "openxr-loaded")]
         let entry = OxrEntry(unsafe { openxr::Entry::load()? });
 
         #[cfg(target_os = "android")]
