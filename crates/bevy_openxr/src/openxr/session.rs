@@ -37,7 +37,7 @@ impl OxrSession {
     /// Creates a new [`OxrSession`] from an [`openxr::Session`].
     /// In the majority of cases, you should use [`create_session`](OxrInstance::create_session) instead.
     pub fn from_inner<G: GraphicsExt>(session: openxr::Session<G>) -> Self {
-        Self(session.clone().into_any_graphics(), G::wrap(session))
+        Self(session.clone().into_any_graphics(), G::wrap::<OxrSession>(session))
     }
 
     /// Returns [`GraphicsWrap`] with [`openxr::Session<G>`] as the inner type.

@@ -10,7 +10,7 @@ keywords = ["gamedev", "bevy", "Xr", "Vr", "OpenXR"]
 [features]
 default = ["vulkan", "openxr-static"]
 vulkan = ["dep:ash", "dep:android_system_properties"]
-d3d12 = ["wgpu/dx12", "wgpu-hal/dx12", "dep:winapi"]
+d3d12 = ["wgpu/dx12", "wgpu-hal/dx12", "dep:winapi", "winapi/d3d12", "winapi/dxgiformat", "dep:windows-core", "dep:windows"]
 fb_passthrough = []
 reflect = ["dep:bevy_reflect"]
 window_support = ["dep:bevy_winit", "dep:bevy_window"]
@@ -55,6 +55,8 @@ wgpu = { workspace = true, features = ["vulkan-portability"] }
 [target.'cfg(target_family = "windows")'.dependencies]
 openxr = { workspace = true, features = ["mint"] }
 winapi = { version = "0.3.9", optional = true }
+windows-core = { version = "0.58", optional = true }
+windows = { version = "0.58", optional = true, features = ["Win32_Graphics_Direct3D12"] }
 
 [lints.clippy]
 too_many_arguments = "allow"

@@ -163,7 +163,7 @@ impl OxrFrameStream {
     /// Creates a new [`OxrFrameStream`] from an [`openxr::FrameStream`].
     /// In the majority of cases, you should use [`create_session`](OxrInstance::create_session) instead.
     pub fn from_inner<G: GraphicsExt>(frame_stream: openxr::FrameStream<G>) -> Self {
-        Self(G::wrap(frame_stream))
+        Self(G::wrap::<OxrFrameStream>(frame_stream))
     }
 
     /// Indicate that graphics device work is beginning.
@@ -231,7 +231,7 @@ impl OxrSwapchain {
     /// Creates a new [`OxrSwapchain`] from an [`openxr::Swapchain`].
     /// In the majority of cases, you should use [`create_swapchain`](OxrSession::create_swapchain) instead.
     pub fn from_inner<G: GraphicsExt>(swapchain: openxr::Swapchain<G>) -> Self {
-        Self(G::wrap(swapchain))
+        Self(G::wrap::<OxrSwapchain>(swapchain))
     }
 
     /// Determine the index of the next image to render to in the swapchain image array.
