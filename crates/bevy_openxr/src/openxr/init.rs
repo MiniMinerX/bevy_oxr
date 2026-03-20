@@ -70,6 +70,27 @@ pub fn should_render(frame_state: Option<Res<OxrFrameState>>) -> bool {
     frame_state.is_some_and(|frame_state| frame_state.should_render)
 }
 
+/// Logs env vars the Khronos OpenXR loader consults (override order varies by loader build).
+fn log_openxr_loader_env() {
+    const VARS: &[&str] = &[
+        "XR_RUNTIME_JSON",
+        "OPENXR_RUNTIME_JSON",
+        "OPENXR_ACTIVE_RUNTIME",
+        "XR_API_LAYER_PATH",
+        "OPENXR_API_LAYER_PATH",
+    ];
+    for name in VARS {
+        match std::env::var_os(name) {
+            Some(v) => info!(
+                "oxr_init: env {}={}",
+                name,
+                v.to_string_lossy()
+            ),
+            None => info!("oxr_init: env {}=(unset)", name),
+        }
+    }
+}
+
 pub struct OxrInitPlugin {
     /// Information about the app this is being used to build.
     pub app_info: AppInfo,
@@ -265,6 +286,8 @@ impl OxrInitPlugin {
         OxrEnabledExtensions,
         SessionGraphicsCreateInfo,
     )> {
+        log_openxr_loader_env();
+
         #[cfg(windows)]
         let entry = {
             info!("oxr_init: OpenXR Entry::linked() (static loader)");
