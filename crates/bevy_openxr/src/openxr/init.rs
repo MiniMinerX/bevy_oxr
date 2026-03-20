@@ -100,6 +100,7 @@ impl Default for OxrInitPlugin {
 
 impl Plugin for OxrInitPlugin {
     fn build(&self, app: &mut App) {
+        info!("OxrInitPlugin::build: start (next is init_xr; set RUST_LOG=info to see oxr_init steps)");
         app.init_resource::<OxrSessionConfig>();
         let cfg = app.world_mut().remove_resource::<OxrManualGraphicsConfig>();
         match self.init_xr(cfg.as_ref()) {
@@ -265,14 +266,22 @@ impl OxrInitPlugin {
         SessionGraphicsCreateInfo,
     )> {
         #[cfg(windows)]
-        let entry = OxrEntry(openxr::Entry::linked());
+        let entry = {
+            info!("oxr_init: OpenXR Entry::linked() (static loader)");
+            OxrEntry(openxr::Entry::linked())
+        };
         #[cfg(not(windows))]
-        let entry = OxrEntry(unsafe { openxr::Entry::load()? });
+        let entry = {
+            info!("oxr_init: OpenXR Entry::load()");
+            OxrEntry(unsafe { openxr::Entry::load()? })
+        };
 
         #[cfg(target_os = "android")]
         entry.initialize_android_loader()?;
 
+        info!("oxr_init: xrEnumerateInstanceExtensionProperties (enumerate_extensions) …");
         let available_exts = entry.enumerate_extensions()?;
+        info!("oxr_init: enumerate_extensions ok");
 
         // check available extensions and send a warning for any wanted extensions that aren't available.
         for ext in available_exts.unavailable_exts(&self.exts) {
@@ -298,18 +307,26 @@ impl OxrInitPlugin {
         }
         .ok_or(OxrError::NoAvailableBackend)?;
 
+        info!("oxr_init: selected graphics backend: {backend:?}");
+
         let exts = self.exts.clone() & available_exts;
 
+        info!("oxr_init: xrCreateInstance …");
         let instance = entry.create_instance(self.app_info.clone(), exts.clone(), &[], backend)?;
+        info!("oxr_init: xrCreateInstance ok; xrGetInstanceProperties …");
         let instance_props = instance.properties()?;
+        info!("oxr_init: xrGetInstanceProperties ok");
 
         info!(
             "Loaded OpenXR runtime: {} {}",
             instance_props.runtime_name, instance_props.runtime_version
         );
 
+        info!("oxr_init: xrGetSystem (HEAD_MOUNTED_DISPLAY) …");
         let system_id = instance.system(openxr::FormFactor::HEAD_MOUNTED_DISPLAY)?;
+        info!("oxr_init: xrGetSystem ok; xrGetSystemProperties …");
         let system_props = instance.system_properties(system_id)?;
+        info!("oxr_init: xrGetSystemProperties ok");
 
         info!(
             "Using system: {}",
@@ -320,7 +337,9 @@ impl OxrInitPlugin {
             }
         );
 
+        info!("oxr_init: init_graphics (wgpu + XR session graphics) …");
         let (graphics, graphics_info) = instance.init_graphics(system_id, cfg)?;
+        info!("oxr_init: init_graphics ok");
 
         Ok((
             instance,
