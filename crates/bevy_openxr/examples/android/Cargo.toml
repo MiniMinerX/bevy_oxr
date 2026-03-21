@@ -8,6 +8,8 @@ publish = false
 
 [dependencies]
 bevy_mod_openxr = { workspace = true, features = [
+    "vulkan",
+    "openxr-static",
     "window_support",
     "fb_passthrough",
 ] }

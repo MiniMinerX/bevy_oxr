@@ -11,7 +11,7 @@ description = "utils for bevy_mod_xr and bevy_mod_openxr"
 [dependencies]
 # bevy = { workspace = true, features = ["bevy_gizmos"] }
 bevy_mod_xr.workspace = true
-bevy_mod_openxr.workspace = true
+bevy_mod_openxr = { workspace = true, features = ["vulkan"] }
 bevy_ecs.workspace=true
 bevy_app.workspace=true
 bevy_transform.workspace=true
