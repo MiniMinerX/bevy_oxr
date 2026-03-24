@@ -424,17 +424,18 @@ pub struct ActionStateVector {
 
 //prototype action references
 //TODO refactor along with action states
+// Public so downstream crates (e.g. Renzora) can re-suggest bindings when the XR session is created late.
 #[derive(Component)]
-struct Actionf32Reference {
-    action: openxr::Action<f32>,
+pub struct Actionf32Reference {
+    pub action: openxr::Action<f32>,
 }
 
 #[derive(Component)]
-struct ActionBooleference {
-    action: openxr::Action<bool>,
+pub struct ActionBooleference {
+    pub action: openxr::Action<bool>,
 }
 
 #[derive(Component)]
-struct ActionVector2fReference {
-    action: openxr::Action<Vector2f>,
+pub struct ActionVector2fReference {
+    pub action: openxr::Action<Vector2f>,
 }
