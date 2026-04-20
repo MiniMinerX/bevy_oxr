@@ -102,7 +102,7 @@ fn update_stage(
 
 //view
 #[derive(Component)]
-struct HeadXRSpace(XrReferenceSpace);
+pub struct HeadXRSpace(XrReferenceSpace);
 
 fn update_head_transforms(
     session: Res<OxrSession>,
