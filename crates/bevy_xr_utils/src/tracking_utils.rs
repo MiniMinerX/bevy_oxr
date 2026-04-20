@@ -168,7 +168,7 @@ fn update_local_floor_transforms(
 
 //left grip
 #[derive(Component)]
-struct LeftGrip;
+pub struct LeftGrip;
 
 fn update_left_grip(
     mut left_grip: Query<&mut Transform, (With<LeftGrip>, Without<XrTrackedLeftGrip>)>,
@@ -184,7 +184,7 @@ fn update_left_grip(
 
 //right grip
 #[derive(Component)]
-struct RightGrip;
+pub struct RightGrip;
 
 fn update_right_grip(
     mut right_grip: Query<&mut Transform, (With<RightGrip>, Without<XrTrackedRightGrip>)>,
